@@ -1,0 +1,1 @@
+const devConfig={style:require("./style")};module.exports=devConfig;
