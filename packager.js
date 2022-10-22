@@ -11,6 +11,7 @@ const packagePath = path.resolve(__dirname, './package.json')
 const package = fs.readFileSync(packagePath)
 console.log(path.resolve(__dirname, 'developer/icon-1024.png'))
 const appConfig = require('./developer/app')
+const protocol = appConfig.protocol
 
 const { getPackageDetailsFromPatchFilename } = require('patch-package/dist/PackageDetails')
 const patches = fs.readdirSync(path.resolve(__dirname, 'patches'))
@@ -121,7 +122,7 @@ packager({
     /@types/
   ],
   protocols: [{
-    name: 'alphabiz', schemes: ['alphabiz://']
+    name: protocol, schemes: [`${protocol}://`]
   },
   {
     name: 'magnet', schemes: ['magnet://']
