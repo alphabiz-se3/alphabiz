@@ -1,5 +1,9 @@
+/**
+ * Configure app basic info.
+ */
+
 /** App name is used everywhere. */
-const APP = 'Betabiz'
+const APP = 'Alphabiz'
 
 const app = {
   /**
@@ -57,12 +61,14 @@ const app = {
      * - `blacklist`: countries in list will be disabled
      * - `whitelist`: only countries in list will be enabled
      */
-    mode: 'blacklist',
+    mode: 'none',
     /**
+     * @type { string[] }
      * Country code list. Must be geoip ISO 3166-1-alpha-2 code
      * @see http://www.geonames.org/countries/
      */
-    list: ['UK']
+    // list: ['US', 'CN']
+    list: []
   }
 }
 

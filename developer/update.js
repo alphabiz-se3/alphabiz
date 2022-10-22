@@ -1,3 +1,6 @@
+/**
+ * Configure update repo, s3 bucket, etc.
+ */
 module.exports = {
   /**
    * Your github config, used for feedback, upgrade, etc
