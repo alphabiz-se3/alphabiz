@@ -1,10 +1,14 @@
 const { exec, execSync } = require('child_process')
-const { existsSync, copyFileSync, mkdirSync, unlinkSync, readFileSync, writeFileSync } = require('fs')
+const { existsSync, copyFileSync, mkdirSync, readFileSync, writeFileSync, unlinkSync, rmSync } = require('fs')
 const { resolve } = require('path')
-const { productName, description } = require('./package.json')
+const { version: pkgVersion } = require('./package.json')
 const publicVersion = require('./public/version.json').version
 const versionHeader = publicVersion.match(/\d+\.\d+\.\d+/gm)
-const pkgVersion = require('./public/version.json').packageVer
+
+const appConfig = require('./developer/app');
+const productName = appConfig.name;
+const description = appConfig.description;
+const author = appConfig.author;
 
 const readline = require('readline')
 const { copySync } = require('fs-extra')
@@ -13,7 +17,6 @@ const version = publicVersion || pkgVersion
 console.log(`version: ${version}`)
 
 const { platform, arch } = process
-const symlinkDir = require('symlink-dir')
 
 const doMake = async () => {
   const arg = platform === 'darwin'
@@ -26,22 +29,25 @@ const doMake = async () => {
   const packageDir = resolve(__dirname, `build/electron/${productName}-${platform}-${arch}`)
   if (!existsSync(packageDir)) {
     console.error('\x1b[41m Error \x1b[0m Cannot find packaged app. Run \x1b[90myarn build\x1b[0m before make.')
-    console.log(`  Ensure that the build result contains a folder of\x1b[33m dist/electron/${productName}-${platform}-${arch}\x1b[0m`)
+    console.log(`  Ensure that the build result contains a folder of\x1b[33m build/electron/${productName}-${platform}-${arch}\x1b[0m`)
     process.exit(1)
   }
   const destDir = resolve(__dirname, `out/${productName}-${platform}-${arch}`)
-  if (platform === 'linux') {
+  if (platform === 'darwin') {
     /**
      * The @electron-forge/maker-deb use symlink linking files to /tmp,
      * so we cannot use symlink for it. Since `fs` does not have an
      * recursive copy method, we just exec copy here
      */
     // execSync(`cp -r "${packageDir}/" "${resolve(__dirname, 'out')}/"`)
+    // MacOS builds includes recursivee subdirectories which cannot be overwritten.
+    // So we remove old directory first, If it exists.
+    if (existsSync(destDir)) rmSync(destDir, { recursive: true })
     copySync(packageDir, destDir, { recursive: true })
   } else copySync(packageDir, destDir, { recursive: true })
   // } else await symlinkDir(packageDir, destDir)
   console.log(`Executing: \x1b[32myarn ${arg}\x1b[0m`)
-  const prefix = `\x1b[32m  * make \x1b[0m`
+  const prefix = '\x1b[32m  * make \x1b[0m'
   const res = exec(`yarn ${arg}`)
   res.stdout.on('data', d => {
     // process.stdout.clearLine()
@@ -114,6 +120,9 @@ if (process.argv.includes('--make')) {
   const packageObj = readFileSync(packagePath)
   const pkg = JSON.parse(packageObj)
   pkg.version = versionHeader[0]
+  pkg.productName = productName
+  pkg.description = description
+  pkg.author = author
   writeFileSync(packagePath, JSON.stringify(pkg, null, 2))
   process.on('exit', () => {
     writeFileSync(packagePath, packageObj)
@@ -122,10 +131,22 @@ if (process.argv.includes('--make')) {
   // if windows modify appxManifest
   if (platform === 'win32') {
     const xmlFilePath = resolve(__dirname, 'appx/template.xml')
-    const appxTemplate = readFileSync(resolve(__dirname, 'appx/template.xml'), 'utf-8')
-    writeFileSync(xmlFilePath, appxTemplate.replace('{{pkgVersion}}', versionHeader[0] + '.0').replace('{{description}}', description))
+    const oldAppxTemplate = readFileSync(resolve(__dirname, 'appx/template.xml'), 'utf-8')
+    let appxTemplate = oldAppxTemplate
+    const pkgConfig = require('./forge.config').makers.find(maker => maker.name === '@electron-forge/maker-appx')
+    if (pkgConfig) {
+      for (const key in pkgConfig.config) {
+        const val = pkgConfig.config[key]
+        if (typeof val === 'string') {
+          console.log(key, '=>', val)
+          appxTemplate = appxTemplate.replace(new RegExp(`{{${key}}}`, 'g'), val);
+        }
+      }
+    }
+    appxTemplate = appxTemplate.replace('{{pkgVersion}}', versionHeader[0] + '.0').replace('{{description}}', description)
+    writeFileSync(xmlFilePath, appxTemplate)
     process.on('exit', () => {
-      writeFileSync(xmlFilePath, appxTemplate)
+      writeFileSync(xmlFilePath, oldAppxTemplate)
       console.log('Restored appx/template.xml before exit')
     })
   }

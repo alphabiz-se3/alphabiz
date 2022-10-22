@@ -9,7 +9,8 @@ const publicVersion = require('./public/version.json').version
 const buildVersion = publicVersion || version
 const packagePath = path.resolve(__dirname, './package.json')
 const package = fs.readFileSync(packagePath)
-console.log(path.resolve(__dirname, 'alphabiz-icon-1024.png'))
+console.log(path.resolve(__dirname, 'developer/icon-1024.png'))
+const appConfig = require('./developer/app')
 
 const { getPackageDetailsFromPatchFilename } = require('patch-package/dist/PackageDetails')
 const patches = fs.readdirSync(path.resolve(__dirname, 'patches'))
@@ -27,6 +28,15 @@ const beforeBuild = async () => {
   //   fs.writeFileSync(packagePath, package)
   //   console.log('Restored package.json before exit')
   // })
+  const devSrc = path.resolve(__dirname, 'developer')
+  const devDist = path.resolve(__dirname, 'build/electron/UnPackaged/developer')
+  const packDist = path.resolve(__dirname, 'build/electron/UnPackaged/node_modules/developer')
+  fs.cpSync(devSrc, devDist, {
+    recursive: true
+  });
+  fs.cpSync(devSrc, packDist, {
+    recursive: true
+  });
 }
 
 beforeBuild()
@@ -35,15 +45,16 @@ packager({
   out: './build/electron',
   appVersion: buildVersion,
   buildVersion: buildVersion,
+  name: appConfig.name,
   extraResource: [
-    path.resolve(__dirname, 'alphabiz-icon-1024.png'),
-    path.resolve(__dirname, 'public/favicon.ico'),
-    path.resolve(__dirname, 'public/platform-assets/mac/trayiconTemplate.png'),
+    path.resolve(__dirname, 'developer/icon-1024.png'),
+    path.resolve(__dirname, 'developer/favicon.ico'),
+    path.resolve(__dirname, 'developer/platform-assets/mac/trayiconTemplate.png'),
     path.resolve(__dirname, 'public/version.json')
   ],
   icon: process.platform === 'darwin'
-    ? path.resolve(__dirname, 'public/platform-assets/mac/app.icns')
-    : path.resolve(__dirname, 'public/platform-assets/windows/icon.ico'),
+    ? path.resolve(__dirname, 'developer/platform-assets/mac/app.icns')
+    : path.resolve(__dirname, 'developer/platform-assets/windows/icon.ico'),
   // patch-package does not work in quasar production mode
   // we should manually copy our patched webtorrent to build path
   // NOTE: this requires `yarn` before `yarn build`
