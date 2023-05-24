@@ -267,7 +267,7 @@ jobs:
           echo "nightly----------------------"
           echo "commit-sha7: ${{ steps.nightly.outputs.commit-sha7 }}"
         shell: bash
-      
+
       - name: Install dependencies 👨🏻‍💻
         uses: nick-fields/retry@v2
         with:
@@ -295,7 +295,7 @@ jobs:
           yarn test:e2e:electron:main
           unset REPO
         shell: bash
-      
+
       - name: wallet E2E Test for Electron 🧪
         if: "!contains(github.event.head_commit.message, 'skip e2e')"
         run: |
@@ -352,6 +352,20 @@ jobs:
         if: contains(steps.vars.outputs.event-name, 'schedule') || contains(env.MODIFIED_FILE_LIST, 'release.json')
         run: 7z a -t7z -mx=9 "./out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.slug.outputs.file-name-lower }}-${{ steps.unify.outputs.package-name }}-${{ steps.vars.outputs.system }}.7z" "./dist/electron/${{ steps.vars.outputs.package }}"
 
+      - name: Sign binary
+        if: matrix.os == 'macos-latest' && ${{ secrets.APPLE_NOTARY_PASSWORD }}
+        uses: lando/code-sign-action@v2
+        with:
+          file: "./dist/electron/${{ steps.vars.outputs.package }}/${{ steps.vars.outputs.package }}"
+          certificate-data: ${{ secrets.APPLE_CERT_DATA }}
+          certificate-password: ${{ secrets.APPLE_CERT_PASSWORD }}
+          apple-notary-user: ${{ secrets.APPLE_NOTARY_USER }}
+          apple-notary-password: ${{ secrets.APPLE_NOTARY_PASSWORD }}
+          apple-notary-tool: altool
+          apple-team-id: AZH97K96R4
+          apple-product-id: org.zeeis.alphabiz
+          options: --options runtime --entitlements entitlements.xml
+
       - name: Generate shasum files
         run: node build-scripts/common/shasum.js out/installers/${{ steps.unify.outputs.tag-name }}
         shell: bash
@@ -406,7 +420,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: main
-      
+
       - name: Setup Node.js ${{ matrix.node-version }} 📮
         uses: actions/setup-node@v3
         with:
@@ -494,7 +508,7 @@ jobs:
           retry_on: error
           command: yarn
           on_retry_command: rm -rf C:/Users/runneradmin/AppData/Local/node-gyp/
-      
+
       - name: Prepare packing env
         run: |
           if ${{ contains(needs.nightly_job.outputs.isModifyReleaseJson, '1') }} ; \
@@ -515,7 +529,7 @@ jobs:
       - name: Pack dmg 📦
         run: |
           ./build-scripts/macos/dmg/build.sh
-      
+
       - name: Pack 7z 📦
         run: |
           7z a -t7z -mx=9 "./out/installers/${{needs.nightly_job.outputs.tag-name}}/${{ needs.nightly_job.outputs.file-name-lower }}-arm64-${{needs.nightly_job.outputs.tag-name}}-macos.7z" "./dist/electron/${{ needs.nightly_job.outputs.display-name }}-darwin-arm64"
@@ -535,7 +549,7 @@ jobs:
           tag_name: ${{needs.nightly_job.outputs.tag-name}}
           files: |
             ./out/installers/${{ needs.nightly_job.outputs.tag-name }}/**
-      
+
       - name: Upload Test Results 🗃
         if: always()
         uses: actions/upload-artifact@v3
@@ -570,7 +584,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: main
-      
+
       - name: Setup Node.js ${{ matrix.node-version }} 📮
         uses: actions/setup-node@v3
         with:
