@@ -40,11 +40,8 @@ jobs:
       file-name-lower: ${{ steps.slug.outputs.file-name-lower }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [macos-latest]
         node-version: [16]
-        include:
-          - os: windows-latest
-            node-version: 16
       fail-fast: false
     environment:
       name: CICD
@@ -288,48 +285,7 @@ jobs:
           command: yarn unpackaged
           on_retry_command: rm -rf C:/Users/runneradmin/AppData/Local/node-gyp/
 
-      - name: main E2E Test for Electron 🧪
-        if: "!contains(github.event.head_commit.message, 'skip e2e')"
-        run: |
-          export REPO=alphabiz
-          yarn test:e2e:electron:main
-          unset REPO
-        shell: bash
-
-      - name: wallet E2E Test for Electron 🧪
-        if: "!contains(github.event.head_commit.message, 'skip e2e')"
-        run: |
-          export REPO=alphabiz
-          yarn test:e2e:electron:wallet
-          unset REPO
-        shell: bash
-
-      - name: E2E Test 🧪
-        if: |
-          !contains(github.event.head_commit.message, 'skip e2e') && !contains(steps.vars.outputs.system, 'windows')
-          && github.repository == 'tanshuai/alphabiz'
-        run: yarn test:e2e:ci
-
-      - name: Upload Test Results 🗃
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: "${{ matrix.os }}-output"
-          path: test/output/**
-
-      #后面的step晚上运行 或 正式发布
-      - name: Get recommends from github
-        if: |
-          (contains(steps.vars.outputs.event-name, 'schedule') || contains(env.MODIFIED_FILE_LIST, 'release.json'))
-          && steps.slug.outputs.app-name == 'Alphabiz'
-        run: |
-          curl -H 'Authorization: token ${{ secrets.PAT }}' \
-          -L "https://raw.githubusercontent.com/tanshuai/alpha.biz/main/static/recommends/v0.2.1.txt" \
-          > public/recommends.txt
-        shell: bash
-
       - name: Run electron-packager 📦
-        if: contains(steps.vars.outputs.event-name, 'schedule') || contains(env.MODIFIED_FILE_LIST, 'release.json')
         run: |
           if ${{ contains(env.MODIFIED_FILE_LIST, 'release.json') }} ; \
           then if ${{ contains(steps.release.outputs.new-tag-name, 'nightly') }} ; \
@@ -342,29 +298,20 @@ jobs:
         shell: bash
 
       - name: Pack app 📦
-        if: contains(steps.vars.outputs.event-name, 'schedule') || contains(env.MODIFIED_FILE_LIST, 'release.json')
+        if: matrix.os === 'macos-latest'
         run: |
-          export PATH=$PATH:/c/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.11/bin
           yarn make
         shell: bash
+      - name: Print macos pkg file
+        if: matrix.os === 'macos-latest'
+        run: echo "out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.vars.outputs.package }}.pkg"
 
       - name: Package for ${{ steps.vars.outputs.system }}-${{ steps.unify.outputs.tag-name }} Release 🗜️
-        if: contains(steps.vars.outputs.event-name, 'schedule') || contains(env.MODIFIED_FILE_LIST, 'release.json')
         run: 7z a -t7z -mx=9 "./out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.slug.outputs.file-name-lower }}-${{ steps.unify.outputs.package-name }}-${{ steps.vars.outputs.system }}.7z" "./dist/electron/${{ steps.vars.outputs.package }}"
 
       - name: Sign binary
         if: matrix.os == 'macos-latest' && ${{ secrets.APPLE_NOTARY_PASSWORD }}
-        uses: lando/code-sign-action@v2
-        with:
-          file: "./dist/electron/${{ steps.vars.outputs.package }}/${{ steps.vars.outputs.package }}"
-          certificate-data: ${{ secrets.APPLE_CERT_DATA }}
-          certificate-password: ${{ secrets.APPLE_CERT_PASSWORD }}
-          apple-notary-user: ${{ secrets.APPLE_NOTARY_USER }}
-          apple-notary-password: ${{ secrets.APPLE_NOTARY_PASSWORD }}
-          apple-notary-tool: altool
-          apple-team-id: AZH97K96R4
-          apple-product-id: org.zeeis.alphabiz
-          options: --options runtime --entitlements entitlements.xml
+        run: ./build-scripts/macos/pkg/build.sh
 
       - name: Generate shasum files
         run: node build-scripts/common/shasum.js out/installers/${{ steps.unify.outputs.tag-name }}

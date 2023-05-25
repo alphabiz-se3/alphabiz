@@ -12,9 +12,9 @@ ensureEnv "VERSION" "x.x.x"
 # Maybe enable other targets in the future
 ensureEnv "PLATFORM" "\"mas\""
 
-# ARM_PATH="dist/electron/$APP-$PLATFORM-arm64/$APP.app"
-# X64_PATH="dist/electron/$APP-$PLATFORM-x64/$APP.app"
-UNV_PATH="dist/electron/$APP-$PLATFORM-universal/$APP.app"
+# ARM_PATH="out/$APP-$PLATFORM-arm64/$APP.app"
+# X64_PATH="out/$APP-$PLATFORM-x64/$APP.app"
+UNV_PATH="out/$APP-$PLATFORM-arm64/$APP.app"
 # if $IS_DEV; then
 #   echo "DEV $IS_DEV"
 #   DEBUG="electron-osx-sign"
