@@ -299,7 +299,7 @@ jobs:
         shell: bash
 
       - name: Pack app 📦
-        if: matrix.os === 'macos-latest'
+        if: matrix.os == 'macos-latest'
         run: |
           yarn make
         shell: bash
@@ -308,7 +308,7 @@ jobs:
         run: 7z a -t7z -mx=9 "./out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.slug.outputs.file-name-lower }}-${{ steps.unify.outputs.package-name }}-${{ steps.vars.outputs.system }}.7z" "./dist/electron/${{ steps.vars.outputs.package }}"
 
       - name: Make pkg
-        if: matrix.os === 'macos-latest'
+        if: matrix.os == 'macos-latest'
         env:
           VERSION: ${{ steps.unify.outputs.tag-name }}
           BUILD_VERSION: ${{ steps.unify.outputs.tag-name }}
@@ -317,7 +317,7 @@ jobs:
           APP: "${{ steps.slug.outputs.display-name }}"
         run: ./build-scripts/macos/pkg/build.sh
       - name: Print macos pkg file size
-        if: matrix.os === 'macos-latest'
+        if: matrix.os == 'macos-latest'
         run: du -h "out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}.pkg"
       - name: Sign binary
         if: matrix.os == 'macos-latest' && ${{ env.APPLE_NOTARY_PASSWORD }}
