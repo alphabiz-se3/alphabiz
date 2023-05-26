@@ -358,13 +358,12 @@ jobs:
 
           # Verify the code signature
           echo "Verifying..."
-          codesign -v "$SIGNFILE" --verbose
+          codesign -v "$SIGNAPP" --verbose
 
-          echo "Signed app"
+          echo "Build pkg"
           ./build-scripts/macos/pkg/build.sh
-      - name: Print macos pkg file size
-        if: matrix.os == 'macos-latest'
-        run: du -h "out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}.pkg"
+          echo "Check pkg size"
+          du -h "$SIGNFILE"
 
       - name: Generate shasum files
         run: node build-scripts/common/shasum.js out/installers/${{ steps.unify.outputs.tag-name }}
