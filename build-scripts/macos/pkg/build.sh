@@ -18,7 +18,8 @@ ensureEnv "APP" "your app name"
 ensureEnv "VERSION" "x.x.x"
 # Maybe enable other targets in the future
 ensureEnv "PLATFORM" "\"mas\""
-ARCH="arm64"
+# ARCH="arm64"
+ARCH=$(arch)
 
 APP_PATH="out/$APP-$PLATFORM-$ARCH/$APP.app"
 # if [ ! -e "$APP_PATH" ]; then
@@ -29,16 +30,16 @@ APP_PATH="out/$APP-$PLATFORM-$ARCH/$APP.app"
 #   echo "Found app build."
 # fi
 ensureExists "$APP_PATH"
-if [ ! -e "$APP_PATH/Contents/_CodeSignature" ]; then
-  echo "Build app is not signed. Running sign script..."
-  . build-scripts/macos/pkg/sign.sh
-else
-  echo "Found app signed."
-fi
+# if [ ! -e "$APP_PATH/Contents/_CodeSignature" ]; then
+#   echo "Build app is not signed. Running sign script..."
+#   . build-scripts/macos/pkg/sign.sh
+# else
+#   echo "Found app signed."
+# fi
 RESULT_PATH="out/installers/$VERSION/$APP_$PLATFORM_$VERSION.pkg"
 
-ensureEnv "APPLE_DISTRIBUTION_KEY" "\"Apple Distribution: Company Name (XXXXXXXXXX)\""
-ensureEnv "APPLE_INSTALLER_KEY" "\"3rd Party Mac Developer Installer: (XXXXXXXXXX)\""
+# ensureEnv "APPLE_DISTRIBUTION_KEY" "\"Apple Distribution: Company Name (XXXXXXXXXX)\""
+# ensureEnv "APPLE_INSTALLER_KEY" "\"3rd Party Mac Developer Installer: (XXXXXXXXXX)\""
 
 # ensureExists "$APP_PATH/Contents/_CodeSignature" "Signing app before packaging. This require installing @electron/osx-sign."
 # sleep 1
