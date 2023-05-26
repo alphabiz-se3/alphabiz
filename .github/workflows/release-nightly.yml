@@ -319,7 +319,7 @@ jobs:
           APP: "${{ steps.slug.outputs.display-name }}"
         run: |
           # Setup
-          BUILD_APP="dist/electron/${{ env.APP }}-darwin-x64/${{ env.APP }}-darwin-x64.app"
+          BUILD_APP="dist/electron/${{ env.APP }}-darwin-x64/${{ env.APP }}.app"
 
           # Throw error if file does not exist
           if [ ! -f "$BUILD_APP" ]; then
