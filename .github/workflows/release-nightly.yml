@@ -319,6 +319,8 @@ jobs:
       - name: Print macos pkg file size
         if: matrix.os == 'macos-latest'
         run: du -h "out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}.pkg"
+      - name: Setup coreutils
+        run: brew install coreutils
       - name: Sign binary
         if: matrix.os == 'macos-latest' && ${{ env.APPLE_NOTARY_PASSWORD }}
         uses: lando/code-sign-action@v2

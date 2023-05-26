@@ -21,13 +21,13 @@ ensureEnv "PLATFORM" "\"mas\""
 ARCH="arm64"
 
 APP_PATH="out/$APP-$PLATFORM-$ARCH/$APP.app"
-if [ ! -e "$APP_PATH" ]; then
-  echo "$APP_PATH"
-  echo "Cannot find build app. Running build script..."
-  infiniteRetry build-scripts/macos/app/build.sh
-else
-  echo "Found app build."
-fi
+# if [ ! -e "$APP_PATH" ]; then
+#   echo "$APP_PATH"
+#   echo "Cannot find build app. Running build script..."
+#   infiniteRetry build-scripts/macos/app/build.sh
+# else
+#   echo "Found app build."
+# fi
 ensureExists "$APP_PATH"
 if [ ! -e "$APP_PATH/Contents/_CodeSignature" ]; then
   echo "Build app is not signed. Running sign script..."
@@ -46,7 +46,7 @@ ensureEnv "APPLE_INSTALLER_KEY" "\"3rd Party Mac Developer Installer: (XXXXXXXXX
 # DEBUG=* yarn electron-osx-sign --identity="$APPLE_DISTRIBUTION_KEY" $APP_PATH
 
 # mkdir -p "$(dirname "$RESULT_PATH")"
-# productbuild --component "$APP_PATH" /Applications --sign "$APPLE_INSTALLER_KEY" "$RESULT_PATH"
+productbuild --component "$APP_PATH" /Applications "$RESULT_PATH"
 
 # if [[ -n "$APPLE_ID" ]] && [[ -n "$APPLE_ASP" ]]; then
 #   echo "Validate pkg with your apple id..."
