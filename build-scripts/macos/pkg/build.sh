@@ -45,8 +45,8 @@ ensureEnv "APPLE_INSTALLER_KEY" "\"3rd Party Mac Developer Installer: (XXXXXXXXX
 # exit 0
 # DEBUG=* yarn electron-osx-sign --identity="$APPLE_DISTRIBUTION_KEY" $APP_PATH
 
-mkdir -p "$(dirname "$RESULT_PATH")"
-productbuild --component "$APP_PATH" /Applications --sign "$APPLE_INSTALLER_KEY" "$RESULT_PATH"
+# mkdir -p "$(dirname "$RESULT_PATH")"
+# productbuild --component "$APP_PATH" /Applications --sign "$APPLE_INSTALLER_KEY" "$RESULT_PATH"
 
 # if [[ -n "$APPLE_ID" ]] && [[ -n "$APPLE_ASP" ]]; then
 #   echo "Validate pkg with your apple id..."

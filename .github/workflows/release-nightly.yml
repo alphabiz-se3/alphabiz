@@ -302,16 +302,30 @@ jobs:
         run: |
           yarn make
         shell: bash
-      - name: Print macos pkg file
-        if: matrix.os === 'macos-latest'
-        run: echo "out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.vars.outputs.package }}.pkg"
 
       - name: Package for ${{ steps.vars.outputs.system }}-${{ steps.unify.outputs.tag-name }} Release 🗜️
         run: 7z a -t7z -mx=9 "./out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.slug.outputs.file-name-lower }}-${{ steps.unify.outputs.package-name }}-${{ steps.vars.outputs.system }}.7z" "./dist/electron/${{ steps.vars.outputs.package }}"
 
+      - name: Make pkg
+        if: matrix.os === 'macos-latest'
+        env:
+          VERSION: ${{ steps.unify.outputs.tag-name }}
+          BUILD_VERSION: ${{ steps.unify.outputs.tag-name }}
+          PLATFORM: darwin
+          BUILD_PLATFORM: darwin
+          APP: "${{ steps.slug.outputs.display-name }}"
+        run: ./build-scripts/macos/pkg/build.sh
+      - name: Print macos pkg file size
+        if: matrix.os === 'macos-latest'
+        run: du -h "out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}.pkg"
       - name: Sign binary
         if: matrix.os == 'macos-latest' && ${{ secrets.APPLE_NOTARY_PASSWORD }}
-        run: ./build-scripts/macos/pkg/build.sh
+        uses: lando/code-sign-action@v2
+        with:
+          file: out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}
+          certificate-data: ${{ secrets.APPLE_CERT_DATA }}
+          certificate-password: ${{ secrets.APPLE_CERT_PASSWORD }}
+          apple-team-id: ${{ secrets.APPLE_TEAM_ID }}
 
       - name: Generate shasum files
         run: node build-scripts/common/shasum.js out/installers/${{ steps.unify.outputs.tag-name }}
