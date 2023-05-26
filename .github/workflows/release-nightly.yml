@@ -285,6 +285,8 @@ jobs:
           on_retry_command: rm -rf C:/Users/runneradmin/AppData/Local/node-gyp/
 
       - name: Run electron-packager 📦
+        env:
+          BUILD_ARCH: x64
         run: |
           if ${{ contains(env.MODIFIED_FILE_LIST, 'release.json') }} ; \
           then if ${{ contains(steps.release.outputs.new-tag-name, 'nightly') }} ; \
@@ -319,16 +321,13 @@ jobs:
           APP: "${{ steps.slug.outputs.display-name }}"
         run: |
           # Setup
-          BUILD_APP="dist/electron/${{ env.APP }}-darwin-x64/${{ env.APP }}.app"
 
+          SIGN_APP="./out/${{ env.APP }}-darwin-x64/${{ env.APP }}.app"
           # Throw error if file does not exist
-          if [ ! -f "$BUILD_APP" ]; then
-            echo "$BUILD_APP does not exist!"
+          if [ ! -e "$SIGN_APP" ]; then
+            echo "$SIGN_APP does not exist!"
             exit 5
           fi
-          mkdir -p "out/${{ env.APP }}-darwin-x64"
-          SIGN_APP="out/${{ env.APP }}-darwin-x64/${{ env.APP }}.app"
-          cp -r "$BUILD_APP" "out/${{ env.APP }}-darwin-x64"
           SIGN_FILE="out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}.pkg"
 
           # Export certs
