@@ -307,14 +307,6 @@ jobs:
 
       - name: Setup coreutils
         run: brew install coreutils
-      - name: Sign App
-        if: matrix.os == 'macos-latest' && ${{ env.APPLE_NOTARY_PASSWORD }}
-        uses: lando/code-sign-action@v2
-        with:
-          file: out/${{ steps.unify.outputs.display-name }}-darwin-x64/${{ steps.unify.outputs.display-name}}.app
-          certificate-data: ${{ secrets.APPLE_CERT_DATA }}
-          certificate-password: ${{ secrets.APPLE_CERT_PASSWORD }}
-          apple-team-id: ${{ secrets.APPLE_TEAM_ID }}
       - name: Make pkg
         if: matrix.os == 'macos-latest'
         env:
