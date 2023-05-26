@@ -318,12 +318,50 @@ jobs:
         run: du -h "out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}.pkg"
       - name: Sign Pkg
         if: matrix.os == 'macos-latest' && ${{ env.APPLE_NOTARY_PASSWORD }}
-        uses: lando/code-sign-action@v2
-        with:
-          file: out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}.pkg
-          certificate-data: ${{ secrets.APPLE_CERT_DATA }}
-          certificate-password: ${{ secrets.APPLE_CERT_PASSWORD }}
-          apple-team-id: ${{ secrets.APPLE_TEAM_ID }}
+        env:
+          CERT_DATA: ${{ secrets.APPLE_CERT_DATA }}
+          CERT_PASS: ${{ secrets.APPLE_CERT_PASSWORD }}
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          # Setup
+          SIGNFILE="out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}.pkg"
+
+          # Throw error if file does not exist
+          if [ ! -f "$SIGNFILE" ]; then
+            echo "$SIGNFILE does not exist!"
+            exit 5
+          fi
+
+          # Export certs
+          echo "$CERT_DATA" | base64 --decode > /tmp/certs.p12
+          echo "exported certs.p12 to /tmp/certs.p12"
+
+          # Create keychain
+          security create-keychain -p actions macos-build.keychain
+          security default-keychain -s macos-build.keychain
+          security unlock-keychain -p actions macos-build.keychain
+          security set-keychain-settings -t 3600 -u macos-build.keychain
+
+          # Import certs to keychain
+          security import /tmp/certs.p12 -k ~/Library/Keychains/macos-build.keychain -P "$CERT_PASS" -T /usr/bin/codesign -T /usr/bin/productsign
+          echo "imported certs"
+
+          # Key signing
+          security set-key-partition-list -S apple-tool:,apple: -s -k actions macos-build.keychain
+
+          # Verify keychain things
+          echo "Verifying keychain..."
+          security find-identity -v macos-build.keychain | grep "$APPLE_TEAM_ID" | grep "Developer ID Application"
+          security find-identity -v macos-build.keychain | grep "$APPLE_TEAM_ID" | grep "Developer ID Installer"
+          echo "Keychain verified"
+
+          # Force the codesignature
+          echo "Codesigning..."
+          codesign --force -s "$APPLE_TEAM_ID" "$SIGNFILE"
+
+          # Verify the code signature
+          echo "Verifying..."
+          codesign -v "$SIGNFILE" --verbose
 
       - name: Generate shasum files
         run: node build-scripts/common/shasum.js out/installers/${{ steps.unify.outputs.tag-name }}
