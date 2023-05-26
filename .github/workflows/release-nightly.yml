@@ -328,7 +328,7 @@ jobs:
             echo "$SIGN_APP does not exist!"
             exit 5
           fi
-          SIGN_FILE="out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}.pkg"
+          SIGN_FILE="out/installers/${{ env.VERSION }}/${{ env.APP }}_${{ env.PLATFORM }}_${{ env.VERSION }}.pkg"
 
           # Export certs
           echo "$CERT_DATA" | base64 --decode > /tmp/certs.p12

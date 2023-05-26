@@ -59,7 +59,7 @@ ensureExists "$APP_PATH"
 # else
 #   echo "Found app signed."
 # fi
-RESULT_PATH="out/installers/$VERSION/$APP_$PLATFORM_$VERSION.pkg"
+RESULT_PATH="out/installers/$VERSION/""$APP""_""$PLATFORM""_$VERSION.pkg"
 
 # ensureEnv "APPLE_DISTRIBUTION_KEY" "\"Apple Distribution: Company Name (XXXXXXXXXX)\""
 # ensureEnv "APPLE_INSTALLER_KEY" "\"3rd Party Mac Developer Installer: (XXXXXXXXXX)\""
@@ -70,12 +70,6 @@ RESULT_PATH="out/installers/$VERSION/$APP_$PLATFORM_$VERSION.pkg"
 # DEBUG=* yarn electron-osx-sign --identity="$APPLE_DISTRIBUTION_KEY" $APP_PATH
 
 # mkdir -p "$(dirname "$RESULT_PATH")"
+echo "$RESULT_PATH" "$APP" "$PLATFORM"
+echo "productbuild --component" "$APP_PATH" "/Applications" "$RESULT_PATH"
 productbuild --component "$APP_PATH" /Applications "$RESULT_PATH"
-
-# if [[ -n "$APPLE_ID" ]] && [[ -n "$APPLE_ASP" ]]; then
-#   echo "Validate pkg with your apple id..."
-#   sleep 1
-#   xcrun altool --validate-app -f "$RESULT_PATH" -t osx -u "$APPLE_ID" -p "$APPLE_ASP"
-# else
-#   printf "You can validate your package via \x1b[32mxcrun altool --validate-app -f \"%s\" -t osx -u YOUR_APPLE_ID -p YOUR_APP_SPEC_PASS\x1b[0m" "$RESULT_PATH"
-# fi
