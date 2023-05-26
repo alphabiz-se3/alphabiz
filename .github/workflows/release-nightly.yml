@@ -319,14 +319,17 @@ jobs:
           APP: "${{ steps.slug.outputs.display-name }}"
         run: |
           # Setup
-          SIGNAPP="out/${{ env.APP }}-darwin-x64/${{ env.APP }}.app"
-          SIGNFILE="out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}.pkg"
+          BUILD_APP="dist/electron/${{ env.APP }}-darwin-x64/${{ env.APP }}-darwin-x64.app"
 
           # Throw error if file does not exist
-          if [ ! -f "$SIGNAPP" ]; then
-            echo "$SIGNAPP does not exist!"
+          if [ ! -f "$BUILD_APP" ]; then
+            echo "$BUILD_APP does not exist!"
             exit 5
           fi
+          mkdir -p "out/${{ env.APP }}-darwin-x64"
+          SIGN_APP="out/${{ env.APP }}-darwin-x64/${{ env.APP }}.app"
+          cp -r "$BUILD_APP" "out/${{ env.APP }}-darwin-x64"
+          SIGN_FILE="out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}.pkg"
 
           # Export certs
           echo "$CERT_DATA" | base64 --decode > /tmp/certs.p12
@@ -353,17 +356,17 @@ jobs:
 
           # Force the codesignature
           echo "Codesigning..."
-          # codesign --force -s "$APPLE_TEAM_ID" "$SIGNAPP"
+          # codesign --force -s "$APPLE_TEAM_ID" "$SIGN_APP"
           ./build-scripts/macos/pkg/sign.sh
 
           # Verify the code signature
           echo "Verifying..."
-          codesign -v "$SIGNAPP" --verbose
+          codesign -v "$SIGN_APP" --verbose
 
           echo "Build pkg"
           ./build-scripts/macos/pkg/build.sh
           echo "Check pkg size"
-          du -h "$SIGNFILE"
+          du -h "$SIGN_FILE"
 
       - name: Generate shasum files
         run: node build-scripts/common/shasum.js out/installers/${{ steps.unify.outputs.tag-name }}
