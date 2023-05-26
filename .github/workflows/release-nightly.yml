@@ -305,6 +305,8 @@ jobs:
       - name: Package for ${{ steps.vars.outputs.system }}-${{ steps.unify.outputs.tag-name }} Release 🗜️
         run: 7z a -t7z -mx=9 "./out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.slug.outputs.file-name-lower }}-${{ steps.unify.outputs.package-name }}-${{ steps.vars.outputs.system }}.7z" "./dist/electron/${{ steps.vars.outputs.package }}"
 
+      - name: Setup coreutils
+        run: brew install coreutils
       - name: Make pkg
         if: matrix.os == 'macos-latest'
         env:
@@ -317,8 +319,6 @@ jobs:
       - name: Print macos pkg file size
         if: matrix.os == 'macos-latest'
         run: du -h "out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}.pkg"
-      - name: Setup coreutils
-        run: brew install coreutils
       - name: Sign binary
         if: matrix.os == 'macos-latest' && ${{ env.APPLE_NOTARY_PASSWORD }}
         uses: lando/code-sign-action@v2
