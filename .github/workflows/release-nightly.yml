@@ -320,7 +320,7 @@ jobs:
         if: matrix.os == 'macos-latest' && ${{ env.APPLE_NOTARY_PASSWORD }}
         uses: lando/code-sign-action@v2
         with:
-          file: out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}
+          file: out/installers/${{ steps.unify.outputs.tag-name }}/${{ steps.unify.outputs.tag-name }}.pkg
           certificate-data: ${{ secrets.APPLE_CERT_DATA }}
           certificate-password: ${{ secrets.APPLE_CERT_PASSWORD }}
           apple-team-id: ${{ secrets.APPLE_TEAM_ID }}

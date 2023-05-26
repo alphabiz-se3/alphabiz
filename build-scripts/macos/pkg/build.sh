@@ -4,7 +4,30 @@
 # and then pack it to a .pkg file with "3rd Party Mac Developer Installer"
 # shellcheck source=../../common/set-env.sh
 . "$(realpath "$0/../../../common/set-env.sh")"
-
+function ensureExists () {
+  if [ ! -e "$1" ]; then
+    echo "Error: ""$1"" does not exists. Make sure you have already craeted or built."
+    if [[ -z "$2" ]]; then
+      echo "  $2"
+    fi
+    exit 1
+  fi
+}
+function ensureEnv () {
+  arg=$1
+  if [[ -z "${!arg}" ]]; then
+    echo "Error: Env $arg not set."
+    if [[ -z "$2" ]]; then
+      echo "  Set it before run your build arg"
+    else
+      echo "  This env variable is expected to be $2"
+    fi
+    echo "You can add a file named .env in root directory, and add your environment variables in it."
+    exit 1
+  else
+    echo "Env: $arg set"
+  fi
+}
 # Running a command until success(exit with code 0)
 function infiniteRetry () {
   until "$@"
