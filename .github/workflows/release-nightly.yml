@@ -145,7 +145,6 @@ jobs:
 
       - name: Get release.json property
         id: release
-        if: contains(env.MODIFIED_FILE_LIST, 'release.json')
         run: |
           CONTENT=$(cat ./release.json)
           TARGET_TAG_NAME=$(echo "$CONTENT" | perl -wnE"say for /(?<=targetTagName\"\:\s\").*(?=\",)/gm")
@@ -204,7 +203,6 @@ jobs:
       # nightly-release use tag_name: $packageJsonVersion-internal/nightly-$dateTime-$commitId
       # official-release use tag_name: ./release.json property newTagName
       - name: Unified Tag format
-        if: contains(steps.vars.outputs.event-name, 'schedule') || contains(env.MODIFIED_FILE_LIST, 'release.json')
         id: unify
         run: |
           if ${{ contains(env.MODIFIED_FILE_LIST, 'release.json') }} ; \
