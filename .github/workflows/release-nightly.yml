@@ -21,7 +21,7 @@ on:
       - "!test/**"
       - "dist/**"
       - "release.json"
-    branches: [main]
+    branches: [main, test-codesign]
 
 jobs:
   nightly_job:
