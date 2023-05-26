@@ -19,7 +19,7 @@ ensureEnv "VERSION" "x.x.x"
 # Maybe enable other targets in the future
 ensureEnv "PLATFORM" "\"mas\""
 # ARCH="arm64"
-ARCH=$(arch)
+ARCH=x64
 
 APP_PATH="out/$APP-$PLATFORM-$ARCH/$APP.app"
 # if [ ! -e "$APP_PATH" ]; then
