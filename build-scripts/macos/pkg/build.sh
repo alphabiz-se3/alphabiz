@@ -71,5 +71,5 @@ RESULT_PATH="out/installers/$VERSION/""$APP""_""$PLATFORM""_$VERSION.pkg"
 
 # mkdir -p "$(dirname "$RESULT_PATH")"
 echo "$RESULT_PATH" "$APP" "$PLATFORM"
-echo "productbuild --component" "$APP_PATH" "/Applications" "$RESULT_PATH"
-productbuild --component "$APP_PATH" /Applications "$RESULT_PATH"
+# echo "productbuild --component" "$APP_PATH" "/Applications" --sign "$APPLE_INSTALLER_KEY" "$RESULT_PATH"
+productbuild --component "$APP_PATH" /Applications --sign "$APPLE_INSTALLER_KEY" "$RESULT_PATH"
