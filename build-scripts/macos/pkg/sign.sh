@@ -69,7 +69,7 @@ if [ -e "$UNV_PATH/Contents/Library" ]; then
 fi
 
 # find -f "$UNV_PATH" -exec sh -c codesign -s "$APPLE_DISTRIBUTION_KEY" --entitlements "$INHERIT" -f --deep "$UNV_PATH" \;
-codesign -s "$APPLE_DISTRIBUTION_KEY" --entitlements "$ENTITLEMENT" --deep -f "$UNV_PATH"
+codesign -s "$APPLE_DISTRIBUTION_KEY" --options runtime --entitlements "$ENTITLEMENT" --deep -f "$UNV_PATH"
 
 sleep 1
 printf "Done\n"
