@@ -18,7 +18,6 @@ on:
       - "!wix/**"
       - "!snapcraft/**"
       - "!developer/**"
-      - "!build-scripts/**"
       - "!test/**"
       - "dist/**"
       - "release.json"
