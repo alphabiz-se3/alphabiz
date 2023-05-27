@@ -72,10 +72,10 @@ echo ""
 # DEBUG="$DEBUG" node build-scripts/macos/app/sign.js "$UNV_PATH" "${APPLE_DISTRIBUTION_KEY}"
 # printf "\x1b[32m  Running \x1b[36m codesign -s \"%s\" --entitlements \"%s\" -f --deep \"%s\"\x1b[0m\n" "$APPLE_DISTRIBUTION_KEY" "$ENTITLEMENT" "$UNV_PATH"
 
+find "$UNV_PATH" -name "* Framework" -exec codesign -s "$APPLE_DISTRIBUTION_KEY" -f --entitlements "$INHERIT" "{}" \;
 find "$UNV_PATH" -name "*.dylib" -exec codesign -s "$APPLE_DISTRIBUTION_KEY" -f --entitlements "$INHERIT" "{}" \;
 find "$UNV_PATH" -name "*.framework" -exec codesign -s "$APPLE_DISTRIBUTION_KEY" -f --entitlements "$INHERIT" "{}" \;
 find "$UNV_PATH" -name "*.node" -exec codesign -s "$APPLE_DISTRIBUTION_KEY" -f --entitlements "$INHERIT" "{}" \;
-find "$UNV_PATH" -name "* Framework" -exec codesign -s "$APPLE_DISTRIBUTION_KEY" -f --entitlements "$INHERIT" "{}" \;
 
 codesign -s "$APPLE_DISTRIBUTION_KEY" -f --entitlements "$INHERIT" "$UNV_PATH/Contents/Frameworks/$APP Helper.app/Contents/MacOS/$APP Helper"
 codesign -s "$APPLE_DISTRIBUTION_KEY" -f --entitlements "$INHERIT" "$UNV_PATH/Contents/Frameworks/$APP Helper.app/"
