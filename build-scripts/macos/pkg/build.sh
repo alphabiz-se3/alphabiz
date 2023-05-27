@@ -56,7 +56,8 @@ productsign --sign "$APPLE_INSTALLER_KEY" "$RESULT_PATH" "$SIGNED_PATH"
 echo "Created signed pkg $SIGNED_PATH"
 
 echo "Notarizing..."
-xcrun altool --notarize-app --primary-bundle-id "$APP_BUNDLE_ID" --username="$APPLE_ID" --password "$APPLE_ASP" --file "$SIGNED_PATH"
+# xcrun altool --notarize-app --primary-bundle-id "$APP_BUNDLE_ID" --username="$APPLE_ID" --password "$APPLE_ASP" --file "$SIGNED_PATH"
+xcrun notarytool submit "$SIGNED_PATH" -v --apple-id "$APPLE_ID" --password "$APPLE_ASP" --team-id "$APPLE_TEAM_ID" -f json --wait
 echo "Notarized."
 xcrun stapler staple "$SIGNED_PATH"
 echo "Stapled"
