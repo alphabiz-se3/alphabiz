@@ -62,14 +62,15 @@ ensureExists "$APP_PATH"
 RESULT_PATH="out/installers/$VERSION/""$APP""_""$PLATFORM""_$VERSION.pkg"
 
 # ensureEnv "APPLE_DISTRIBUTION_KEY" "\"Apple Distribution: Company Name (XXXXXXXXXX)\""
-# ensureEnv "APPLE_INSTALLER_KEY" "\"3rd Party Mac Developer Installer: (XXXXXXXXXX)\""
+ensureEnv "APPLE_INSTALLER_KEY" "\"Developer ID Installer: (XXXXXXXXXX)\""
 
 # ensureExists "$APP_PATH/Contents/_CodeSignature" "Signing app before packaging. This require installing @electron/osx-sign."
 # sleep 1
 # exit 0
 # DEBUG=* yarn electron-osx-sign --identity="$APPLE_DISTRIBUTION_KEY" $APP_PATH
 
-# mkdir -p "$(dirname "$RESULT_PATH")"
 echo "$RESULT_PATH" "$APP" "$PLATFORM"
-# echo "productbuild --component" "$APP_PATH" "/Applications" --sign "$APPLE_INSTALLER_KEY" "$RESULT_PATH"
+mkdir -p "$(dirname "$RESULT_PATH")"
+echo "productbuild --component" "$APP_PATH" "/Applications" --sign "$APPLE_INSTALLER_KEY" "$RESULT_PATH"
 productbuild --component "$APP_PATH" /Applications --sign "$APPLE_INSTALLER_KEY" "$RESULT_PATH"
+echo "Created signed pkg $RESULT_PATH"
