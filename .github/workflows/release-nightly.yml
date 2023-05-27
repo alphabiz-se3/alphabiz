@@ -12,6 +12,7 @@ on:
     paths:
       - "**.js"
       - "**/release-nightly.yml"
+      - "build-scripts/**"
       - "!patches/**"
       - "!public/**"
       - "!wix/**"
