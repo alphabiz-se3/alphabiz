@@ -314,7 +314,7 @@ jobs:
           CERT_PASS: ${{ secrets.APPLE_CERT_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_DISTRIBUTION_KEY: "Developer ID Application"
-          APPLE_INSTALLER_KEY: "Developer ID Installer"
+          APPLE_INSTALLER_KEY: "Installer"
           VERSION: ${{ steps.unify.outputs.tag-name }}
           BUILD_VERSION: ${{ steps.unify.outputs.tag-name }}
           PLATFORM: darwin
