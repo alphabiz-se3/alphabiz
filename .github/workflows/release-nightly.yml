@@ -68,7 +68,6 @@ jobs:
       TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }}
       TWITTER_ACCESS_TOKEN_KEY: ${{ secrets.TWITTER_ACCESS_TOKEN_KEY }}
       TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
-      APPLE_NOTARY_PASSWORD: ${{ secrets.APPLE_NOTARY_PASSWORD }}
     steps:
       - name: Get short SHA 🔑
         id: sha
@@ -319,6 +318,9 @@ jobs:
           PLATFORM: darwin
           BUILD_PLATFORM: darwin
           APP: "${{ steps.slug.outputs.display-name }}"
+          APP_BUNDLE_ID: org.alpha.biz
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ASP: ${{ secrets.APPLE_ASP }}
         run: |
           # Setup
           SIGN_APP="./out/${{ env.APP }}-darwin-x64/${{ env.APP }}.app"

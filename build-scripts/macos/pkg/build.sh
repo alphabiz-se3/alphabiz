@@ -3,31 +3,7 @@
 # This script will first sign the app with "Apple Distribution" certificate,
 # and then pack it to a .pkg file with "3rd Party Mac Developer Installer"
 # shellcheck source=../../common/set-env.sh
-. "$(realpath "$0/../../../common/set-env.sh")"
-function ensureExists () {
-  if [ ! -e "$1" ]; then
-    echo "Error: ""$1"" does not exists. Make sure you have already craeted or built."
-    if [[ -z "$2" ]]; then
-      echo "  $2"
-    fi
-    exit 1
-  fi
-}
-function ensureEnv () {
-  arg=$1
-  if [[ -z "${!arg}" ]]; then
-    echo "Error: Env $arg not set."
-    if [[ -z "$2" ]]; then
-      echo "  Set it before run your build arg"
-    else
-      echo "  This env variable is expected to be $2"
-    fi
-    echo "You can add a file named .env in root directory, and add your environment variables in it."
-    exit 1
-  else
-    echo "Env: $arg set"
-  fi
-}
+. "build-scripts/common/set-env.sh"
 # Running a command until success(exit with code 0)
 function infiniteRetry () {
   until "$@"
@@ -60,7 +36,7 @@ ensureExists "$APP_PATH"
 #   echo "Found app signed."
 # fi
 RESULT_PATH="out/installers/$VERSION/""$APP""_""$PLATFORM""_$VERSION.pkg"
-SIGNED_PATH="out/installers/$VERSION/""$APP""_""$PLATFORM""_$VERSION_signed.pkg"
+SIGNED_PATH="out/installers/$VERSION/""$APP""_""$PLATFORM""_""$VERSION""_signed.pkg"
 
 # ensureEnv "APPLE_DISTRIBUTION_KEY" "\"Apple Distribution: Company Name (XXXXXXXXXX)\""
 ensureEnv "APPLE_INSTALLER_KEY" "\"Developer ID Installer: (XXXXXXXXXX)\""
@@ -78,3 +54,10 @@ productbuild --component "$APP_PATH" /Applications "$RESULT_PATH" # --sign "$APP
 echo "Created unsigned pkg $RESULT_PATH"
 productsign --sign "$APPLE_INSTALLER_KEY" "$RESULT_PATH" "$SIGNED_PATH"
 echo "Created signed pkg $SIGNED_PATH"
+
+echo "Notarizing..."
+xcrun altool --notarize-app --primary-bundle-id "$APP_BUNDLE_ID" --username="$APPLE_ID" --password "$APPLE_ASP" --file "$SIGNED_PATH"
+echo "Notarized."
+xcrun stapler staple "$SIGNED_PATH"
+echo "Stapled"
+echo "Finish signing pkg file."
