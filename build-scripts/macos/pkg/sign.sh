@@ -50,10 +50,10 @@ LOGINHELPER="$ENTITLEMENTS_DIR/entitlements.loginhelper.plist"
 cat "$ENTITLEMENT"
 echo ""
 
-find "$UNV_PATH" -name "*.dylib" -exec codesign -s "$APPLE_DISTRIBUTION_KEY" --deep -f --options runtime --entitlements "$INHERIT" "{}" \;
-find "$UNV_PATH" -name "*.framework" -exec codesign -s "$APPLE_DISTRIBUTION_KEY" --deep -f --options runtime --entitlements "$INHERIT" "{}" \;
-find "$UNV_PATH" -name "*.node" -exec codesign -s "$APPLE_DISTRIBUTION_KEY" --deep -f --options runtime --entitlements "$INHERIT" "{}" \;
-find "$UNV_PATH" -name "* Framework" -exec codesign -s "$APPLE_DISTRIBUTION_KEY" --deep -f --options runtime --entitlements "$INHERIT" "{}" \;
+find "$UNV_PATH" -name "*.dylib" -exec codesign -s "$APPLE_DISTRIBUTION_KEY" -f --options runtime --entitlements "$INHERIT" "{}" \;
+find "$UNV_PATH" -name "*.framework" -exec codesign -s "$APPLE_DISTRIBUTION_KEY" -f --options runtime --entitlements "$INHERIT" "{}" \;
+find "$UNV_PATH" -name "*.node" -exec codesign -s "$APPLE_DISTRIBUTION_KEY" -f --options runtime --entitlements "$INHERIT" "{}" \;
+find "$UNV_PATH" -name "* Framework" -exec codesign -s "$APPLE_DISTRIBUTION_KEY" -f --options runtime --entitlements "$INHERIT" "{}" \;
 
 codesign -s "$APPLE_DISTRIBUTION_KEY" -f --options runtime --entitlements "$INHERIT" "$UNV_PATH/Contents/Frameworks/$APP Helper.app/Contents/MacOS/$APP Helper"
 codesign -s "$APPLE_DISTRIBUTION_KEY" -f --options runtime --entitlements "$INHERIT" "$UNV_PATH/Contents/Frameworks/$APP Helper.app/"
@@ -72,8 +72,8 @@ if [ -e "$UNV_PATH/Contents/Frameworks/Squirrel.framework/Versions/A/Resources/S
   codesign -s "$APPLE_DISTRIBUTION_KEY" -f --options runtime --entitlements "$INHERIT" "$UNV_PATH/Contents/Frameworks/Squirrel.framework/Versions/A/Resources/ShipIt"
 fi
 
-# find -f "$UNV_PATH" -exec sh -c codesign -s "$APPLE_DISTRIBUTION_KEY" --entitlements "$INHERIT" -f --deep "$UNV_PATH" \;
-codesign -s "$APPLE_DISTRIBUTION_KEY" --options runtime --entitlements "$ENTITLEMENT" --deep -f "$UNV_PATH"
+# find -f "$UNV_PATH" -exec sh -c codesign -s "$APPLE_DISTRIBUTION_KEY" --entitlements "$INHERIT" -f "$UNV_PATH" \;
+codesign -s "$APPLE_DISTRIBUTION_KEY" --options runtime --entitlements "$ENTITLEMENT" -f "$UNV_PATH"
 
 sleep 1
 printf "Done\n"

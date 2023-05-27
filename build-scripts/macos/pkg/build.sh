@@ -35,8 +35,8 @@ ensureExists "$APP_PATH"
 # else
 #   echo "Found app signed."
 # fi
-RESULT_PATH="out/installers/$VERSION/""$APP""_""$PLATFORM""_$VERSION.pkg"
-SIGNED_PATH="out/installers/$VERSION/""$APP""_""$PLATFORM""_""$VERSION""_signed.pkg"
+RESULT_PATH="out/installers/$VERSION/""$APP""_""$PLATFORM""_""$VERSION""_unsigned.pkg"
+SIGNED_PATH="out/installers/$VERSION/""$APP""_""$PLATFORM""_""$VERSION"".pkg"
 
 # ensureEnv "APPLE_DISTRIBUTION_KEY" "\"Apple Distribution: Company Name (XXXXXXXXXX)\""
 ensureEnv "APPLE_INSTALLER_KEY" "\"Developer ID Installer: (XXXXXXXXXX)\""
