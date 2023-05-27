@@ -8,6 +8,7 @@ ensureEnv "APP" "your app name"
 ensureEnv "VERSION" "x.x.x"
 # Maybe enable other targets in the future
 ensureEnv "PLATFORM" "\"mas\""
+ensureEnv "APPLE_TEAM_ID" "org.your-org.app-name"
 
 # ARM_PATH="out/$APP-$PLATFORM-arm64/$APP.app"
 # X64_PATH="out/$APP-$PLATFORM-x64/$APP.app"

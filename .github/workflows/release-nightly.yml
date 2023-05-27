@@ -307,7 +307,7 @@ jobs:
       - name: Setup coreutils
         run: brew install coreutils
       - name: Create And Sign Pkg
-        if: matrix.os == 'macos-latest' && ${{ env.APPLE_NOTARY_PASSWORD }}
+        if: matrix.os == 'macos-latest' && ${{ env.APPLE_CERT_DATA }}
         env:
           CERT_DATA: ${{ secrets.APPLE_CERT_DATA }}
           CERT_PASS: ${{ secrets.APPLE_CERT_PASSWORD }}

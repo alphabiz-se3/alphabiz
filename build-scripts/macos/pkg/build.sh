@@ -71,6 +71,6 @@ ensureEnv "APPLE_INSTALLER_KEY" "\"Developer ID Installer: (XXXXXXXXXX)\""
 
 echo "$RESULT_PATH" "$APP" "$PLATFORM"
 mkdir -p "$(dirname "$RESULT_PATH")"
-echo "productbuild --component" "$APP_PATH" "/Applications" --sign "$APPLE_INSTALLER_KEY" "$RESULT_PATH"
-productbuild --component "$APP_PATH" /Applications --sign "$APPLE_INSTALLER_KEY" "$RESULT_PATH"
+echo "productbuild --component" "$APP_PATH" "/Applications" "$RESULT_PATH"
+productbuild --component "$APP_PATH" /Applications "$RESULT_PATH"
 echo "Created signed pkg $RESULT_PATH"
