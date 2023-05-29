@@ -67,16 +67,16 @@ if [ -e "$UNV_PATH/Contents/Library" ]; then
   codesign -s "$APPLE_DISTRIBUTION_KEY" -f --options runtime --entitlements "$LOGINHELPER" "$UNV_PATH/Contents/Library/LoginItems/$APP Login Helper.app/Contents/MacOS/$APP Login Helper"
   codesign -s "$APPLE_DISTRIBUTION_KEY" -f --options runtime --entitlements "$LOGINHELPER" "$UNV_PATH/Contents/Library/LoginItems/$APP Login Helper.app"
 fi
-if [ -e "$UNV_PATH/Contents/Frameworks/Squirrel.framework/Versions/A/Squirrel" ]; then
-  codesign -s "$APPLE_DISTRIBUTION_KEY" -f --options runtime --entitlements "$INHERIT" "$UNV_PATH/Contents/Frameworks/Squirrel.framework/Versions/A/Squirrel"
-fi
+# if [ -e "$UNV_PATH/Contents/Frameworks/Squirrel.framework/Versions/A/Squirrel" ]; then
+#   codesign -s "$APPLE_DISTRIBUTION_KEY" -f --options runtime --entitlements "$INHERIT" "$UNV_PATH/Contents/Frameworks/Squirrel.framework/Versions/A/Squirrel"
+# fi
 if [ -e "$UNV_PATH/Contents/Frameworks/Squirrel.framework/Versions/A/Resources/ShipIt" ]; then
   # This is only available in non-mas build
   codesign -s "$APPLE_DISTRIBUTION_KEY" -f --options runtime --entitlements "$INHERIT" "$UNV_PATH/Contents/Frameworks/Squirrel.framework/Versions/A/Resources/ShipIt"
 fi
 
 # find -f "$UNV_PATH" -exec sh -c codesign -s "$APPLE_DISTRIBUTION_KEY" --entitlements "$INHERIT" -f --deep "$UNV_PATH" \;
-codesign -s "$APPLE_DISTRIBUTION_KEY" --options runtime --entitlements "$ENTITLEMENT" -f "$UNV_PATH/Contents/MacOS/$APP"
+# codesign -s "$APPLE_DISTRIBUTION_KEY" --options runtime --entitlements "$ENTITLEMENT" -f "$UNV_PATH/Contents/MacOS/$APP"
 codesign -s "$APPLE_DISTRIBUTION_KEY" --options runtime --entitlements "$ENTITLEMENT" -f "$UNV_PATH"
 
 sleep 1
