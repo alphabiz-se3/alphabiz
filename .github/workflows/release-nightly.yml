@@ -317,6 +317,8 @@ jobs:
           BUILD_VERSION: ${{ steps.unify.outputs.tag-name }}
           PLATFORM: darwin
           BUILD_PLATFORM: darwin
+          ARCH: x64
+          BUILD_ARCH: x64
           APP: "${{ steps.slug.outputs.display-name }}"
           APP_BUNDLE_ID: org.alpha.biz
           APPLE_ID: ${{ secrets.APPLE_ID }}
