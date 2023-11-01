@@ -3,7 +3,7 @@
  */
 
 /** App name is used everywhere. */
-const APP = 'Alphabiz'
+const APP = 'sevenTop'
 
 const app = {
   /**
@@ -136,12 +136,9 @@ const app = {
    */
   theme: {
     color: {
-      primary: '#d1994b',
-      secondary: '#f3ce90',
-      accent: '#fbbb4a'
-      // primary: '#a2c1f3',
-      // secondary: '#97afc4',
-      // accent: '#5800dc'
+      primary: '#409EFF',
+      secondary: '#67C23A',
+      accent: '#909399'
     },
     /**
      * CSS for app icon in left-top corner as background
